@@ -88,8 +88,9 @@ jobs:
             - name: 'Authenticate to target org'
               run: sfdx auth:sfdxurl:store -f ./SFDX_NEWPLAYGROUND_URL.txt -s -a new_pg
 
+            # Deploy delta file
             - name: 'Deploy the delta file on target org - run specified tests'
-              if: ${{ env.APEX_TESTS != 'all' }}
+              if: ${{ env.APEX_TESTS != 'all' && env.APEX_TESTS != 'none'}}
               run: |
                   echo ${{env.APEX_TESTS}}
                   sfdx force:source:deploy -p "changed-sources/force-app" --testlevel RunSpecifiedTests --runtests ${{env.APEX_TESTS}} --json
@@ -97,6 +98,10 @@ jobs:
             - name: 'Deploy the delta file on target org - run all tests'
               if: ${{ env.APEX_TESTS == 'all' }}
               run: sfdx force:source:deploy -p "changed-sources/force-app" --testlevel RunLocalTests  --json
+      
+            - name: 'Deploy the delta file on target org - run all tests'
+              if: ${{ env.APEX_TESTS == 'none' }}
+              run: sfdx force:source:deploy -p "changed-sources/force-app" --json
 
             - name: 'Deploy destructive changes (if any) to target org'
               run: sfdx force:mdapi:deploy -d "changed-sources/destructiveChanges" --checkonly --ignorewarnings             
