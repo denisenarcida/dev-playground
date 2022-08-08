@@ -89,7 +89,7 @@ jobs:
               run: sfdx auth:sfdxurl:store -f ./SFDX_NEWPLAYGROUND_URL.txt -s -a new_pg
 
             - name: 'Deploy the delta file on target org'
-              run: sfdx force:source:deploy -p changed-sources/force-app --testlevel RunSpecifiedTests --runtests ${{env.APEX_TESTS}} --json
+              run: sfdx force:source:deploy -p "changed-sources/force-app" --testlevel RunSpecifiedTests --runtests ${{env.APEX_TESTS}} --json              
 
             - name: 'Deploy destructive changes (if any) to target org'
               run: sfdx force:mdapi:deploy -d "changed-sources/destructiveChanges" --checkonly --ignorewarnings             
