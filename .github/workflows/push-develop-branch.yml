@@ -50,7 +50,7 @@ jobs:
 
             # Once a developer has specified a list of classes to run, we need to be able
             # to extract this information from the PR, and pass it on the the VM.
-            
+
             - name: 'Read PR Body'
               env:
                 # The pull request body is available through the github context object
@@ -85,11 +85,11 @@ jobs:
                   sfdx sgd:source:delta --to "HEAD" --from "HEAD^" --output changed-sources/ --generate-delta --source force-app/
 
             # Authenticate to org
-            - name: 'Authenticate to Integration Org'
-              run: sfdx auth:sfdxurl:store -f ./SFDX_NEWPLAYGROUND_URL.txt -s -a integration
+            - name: 'Authenticate to target org'
+              run: sfdx auth:sfdxurl:store -f ./SFDX_NEWPLAYGROUND_URL.txt -s -a new_pg
 
-            - name: 'Deploy the entire branch to Integration org'
+            - name: 'Deploy the delta file on target org'
               run: sfdx force:source:deploy -p changed-sources/force-app --testlevel RunSpecifiedTests --runtests ${{env.APEX_TESTS}} --json
 
-            - name: 'Deploy destructive changes (if any) to Integration org'
+            - name: 'Deploy destructive changes (if any) to target org'
               run: sfdx force:mdapi:deploy -d "changed-sources/destructiveChanges" --checkonly --ignorewarnings             
